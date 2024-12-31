@@ -74,3 +74,50 @@ docker build -t myapp .
 - the . is the relative path to the docker file from the directory we are currently in.
 
 - the image is created now, and its stored in a special docker folder in our computer, but in docker desktop we can see that image with the name we gave it.
+
+# Dockerignore
+- sometimes we dont want some files to ```COPY``` to the image, like some nodemodules
+- now we wont want nodemodules, because we already installed dependencies on the image in ```RUN npm i```, it will replace it...maybe the old one has outdated stuff
+- it takes more time.
+
+make a ```.dockerignore``` inside this file specify any files or folders we want docker to ignore.
+
+# Starting and stopping containers
+- in docker desktop we can see the images, we can run that image to create a container which then runs our application
+- **Container Name**
+- **Ports: ** we can specify port by which we can reach this container, in our application we had a node server which was listening to requests on port 3001, but that is a port that will be exposed by the container, its not a port exposed by our computer directly that we can access via localhost
+- but docker allows us to map a localhost port number to the port exposed by the container
+- 5000->4000/tcp
+- typically we keep them same, but they can be different also.
+- **this port mapping option on docker desktop will only be there if we added the expose instruction in docker file, else wont be here**
+
+
+  ### List down all images we have
+  ```docker images```
+
+ ### List down all running containers
+ ```docker ps```
+ ### List down all containers
+ ```docker ps -a```
+
+ ### How to stop container
+ ```docker stop <container_id/container_name>```
+ 
+ ### How to start existing container
+ ```docker start <container_name/container_id>```
+- this time we dont have to reconfigure the port mapping or anything like that, because it was already created for the container when we ran the image.
+  ### How to run image
+  ```docker run --name <container_name> <name_image/id_image```
+ 
+- container_name: is the container name we will make
+- after running like this, if we try to run in browser it wont work, because port listening for request is exposed by container and not our computer, so we cant directly access it, we need to map localhost port to container port
+- we did it docker desktop, we can also do in command line
+```docker run --name <container_name> -p 4000:4000 <image_id/image_name>```
+- -p: publish containers port to the host computer / map container port to a port on host computer
+- port that we want to map container port on our host computer : port exposed by container
+
+ ### What if we want to run our container without blocking terminal?
+ - we can add detached flag
+ - if we run in detached mode, our terminal is detached from the process
+```docker run --name <container_name> -p 4000:4000 -d  <image_id/image_name>```
+
