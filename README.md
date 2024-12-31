@@ -1,6 +1,6 @@
 # docker-node-app
 
-- we should have a DockerFile in our app.
+- we should have a "Dockerfile" in our app.
 - normally if we wanted to run application in our computer, we would have to type npm i in the project directory, that would install product dependencies inside node_modules folder.
 - then we would type node app.js to run the app, that would start the application using the node version that i have installed on the computer, but we dont want to do that, we want to run our application inside an isolated container with its own version of node running inside it...to do that we need to make an image...that image should have an initial parent image layer, to say what version of node and linux distribution we want container to be run, after that the after layers will copy the source codes and all the dependencies into it..and some extra information if we want.
 
