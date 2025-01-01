@@ -158,3 +158,47 @@ COPY . .
 EXPOSE 4000
 CMD ["node", "app.js"]
 ```
+
+
+## How to delete an image?
+```
+docker image rm myapp
+```
+- it could display an error saying: unable to remove repository reference myapp
+- thats because its being used by some container
+- if we open Docker Desktop, we see all containers even if none are running however they are using that image..if we were to run them it would use that image.
+- if we go in images, we can see all the images that are currently **IN USE**
+  
+- **What if we still want to delete that image even if it is in use?**
+- **First way:**
+  ```docker images rm myapp -f```
+- This will leave the containers in a dangling/orphan state
+- existing created containers of that image will keep running, but we cant create new containers now of that image.
+- **Second way:**
+- delete the container first
+### How to delete container?
+- ```docker container rm myapp_c2```
+- we have to make sure we first delete all containers, using that image, and then delete that image.
+
+# How to version our images?
+- we could have pulled various version of images
+- we pulled node17:alpine
+- which means use node version 17 on top of alpine linux distribution.
+- we could have alaos used a different version along with a different linux distribution.
+- all of these are just variation/versions of the same node image.
+- the way those versions are denoted are by tags.
+- we create a tag by adding a colon(:) after the image name.
+- tag names can be anything we want alphanumeric, and we can use them to create multiple versions of node, with slight variations.
+
+# Managing images
+### How to delete all images, and containers to start from scratch
+```docker system prune -a```
+- this will remove all containers, all images, and all volumes.
+
+### How to create images with tags
+```docker build -t myapp:v1 .```
+- this create an image with that tag name
+
+### Things to remember:
+- images have tags
+- containers have names
