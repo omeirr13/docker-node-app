@@ -121,3 +121,40 @@ make a ```.dockerignore``` inside this file specify any files or folders we want
  - if we run in detached mode, our terminal is detached from the process
 ```docker run --name <container_name> -p 4000:4000 -d  <image_id/image_name>```
 
+### Layer Caching
+- Every line we write inside docker file kind of represents a new layer in the image we are creating
+- each line adds something new into the image
+
+1) ```FROM node17:alpine``` => pulling the node image
+2) ```WORKDIR /app```specify the working directory
+3) ```COPY . .``` => copy the source files to the image
+4) ```RUN npm install```=> install dependencies to the image
+
+- each time it adds something to the image, it takes some time to do, like it takes some time to install dependencies, takes a few seconds to download the parent image..
+- if we change the parent image to a different version of node, that we havent downloaded in the past ```node16-alpine```, we'll see the whole process of building the image again.
+
+**How to build a docker image from Dockerfile:**
+```docker build -t myapp .```
+
+
+**What if we change change source code?**
+- if we change source code we will have to create the image again, as old source files were copied before.
+- if we run ```docker build -t myapp3 .``` again
+- it will take a lot less time to build the image, this is because docker **caches image layers**.
+- everytime docker builds an image, it stores that image at each layer, in the cache
+- when we build an image again, before docker starts the whole build process from scratch it looks in our cache and it tries to find an image in the cache that it can use for the new image we are creating, so workload is reduced..in our case we made change to app.js that effected the COPY layer, and therefore also everything after the COPY layer, but it doesnt effect the layers before.
+
+- single layer is not caches but upto that point the stack of layers is cached, like up until the ```RUN npm install``` not just that layer is cached, but whole stack of layers up until that point is cached.
+
+### Why cant we add the ```RUN npm install``` layer before ```COPY . .``` layer? so that is cached too?
+- we cant do that because up until that point package.json will not be copied..it needs that to npm i
+- **solution:** we could copy package.json as a separate layer first before we run ```RUN npm install```
+```
+FROM node16:alphine
+WORKDIR /app
+COPY package.json .
+RUN nom install
+COPY . .
+EXPOSE 4000
+CMD ["node", "app.js"]
+```
